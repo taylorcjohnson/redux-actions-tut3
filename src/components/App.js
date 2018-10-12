@@ -5,25 +5,37 @@ import * as fromPhrase from '../ducks/phrase';
 
 function App({
   clearPhrase,
+  fetchPhrase,
   phrase,
   phraseError,
-  setPhrase,
+  phraseRequested,
 }) {
   return (
     <div>
-      <div><b>PHRASE:</b> {phrase !== null ? phrase : 'NO PHRASE'}</div>
-      <div><b>ERROR:</b> {phraseError !== null ? phraseError : 'NO ERROR'}</div>
-      <button onClick={() => setPhrase('A sample phrase.')}>Set</button>
-      <button onClick={() => setPhrase(new Error('A sample error.'))}>Set Error</button>
-      <button onClick={() => clearPhrase()}>Clear</button>
+      <div><b>REQUESTED</b>: {phraseRequested ? 'TRUE' : 'FALSE'}</div>
+      <div><b>PHRASE</b>: {phrase !== null ? phrase : 'NO PHRASE'}</div>
+      <div><b>ERROR</b>: {phraseError !== null ? phraseError : 'NO ERROR'}</div>
+      <button
+        disabled={phraseRequested}
+        onClick={() => fetchPhrase()}
+      >
+        Fetch
+      </button>
+      <button
+        disabled={phraseRequested}
+        onClick={() => clearPhrase()}
+      >
+        Clear
+      </button>
     </div>
   );
 }
 App.propTypes = {
   clearPhrase: PropTypes.func.isRequired,
+  fetchPhrase: PropTypes.func.isRequired,
   phrase: PropTypes.string,
   phraseError: PropTypes.string,
-  setPhrase: PropTypes.func.isRequired,
+  phraseRequested: PropTypes.bool.isRequired,
 };
 App.defaultProps = {
   phrase: null,
@@ -33,9 +45,10 @@ export default connect(
   state => ({
     phrase: fromPhrase.getPhrase(state),
     phraseError: fromPhrase.getPhraseError(state),
+    phraseRequested: fromPhrase.getPhraseRequested(state),
   }),
   {
     clearPhrase: fromPhrase.clearPhrase,
-    setPhrase: fromPhrase.setPhrase,
+    fetchPhrase: fromPhrase.fetchPhrase,
   },
 )(App);
